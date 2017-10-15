@@ -1,37 +1,51 @@
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage {
+
     private Resume[] storage = new Resume[10000];
+    private int size = 0;
 
     void clear() {
         storage = new Resume[10000];
+        size = 0;
     }
 
     void save(Resume r) {
-        if (this.size() < 10000) storage[this.size()] = r;
+        if (size < 10000) storage[size++] = r;
         else System.out.println("Переполнение");
     }
 
     Resume get(String uuid) {
-        return Arrays.stream(storage).filter(o -> o != null && o.uuid.equals(uuid)).findFirst().orElse(null);
+        for (int i = 0; i < size; i++)
+            if (storage[i].uuid.equals(uuid)) return storage[i];
+        return null;
     }
 
     void delete(String uuid) {
-        storage = Arrays.copyOf(Arrays.stream(storage).filter(o -> o != null && !o.uuid.equals(uuid)).toArray(Resume[]::new), 10000);
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid)) {
+                int numMoved = size - i - 1;
+                if (numMoved > 0)
+                    System.arraycopy(storage, i + 1, storage, i,
+                            numMoved);
+                storage[--size] = null;
+                break;
+            }
+        }
     }
 
     /**
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return Arrays.stream(storage).filter(Objects::nonNull).toArray(Resume[]::new);
+        return Arrays.stream(storage).limit(size).toArray(Resume[]::new);
     }
 
     int size() {
-        return (int)Arrays.stream(storage).filter(Objects::nonNull).count();
+        return size;
     }
 }
