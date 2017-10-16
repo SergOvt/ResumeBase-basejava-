@@ -42,7 +42,9 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return Arrays.stream(storage).limit(size).toArray(Resume[]::new);
+        Resume[] result = new Resume[size];
+        System.arraycopy(storage, 0, result, 0, size);
+        return result;
     }
 
     int size() {
