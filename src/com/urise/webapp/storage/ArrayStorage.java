@@ -17,8 +17,8 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        if (r == null || r.getUuid() == null || get(r.getUuid()) != null) {
-            System.out.println("Недопустимый элемент");
+        if (r == null || r.getUuid() == null || getIndex(r.getUuid()) != -1) {
+            System.out.println("Недопустимый элемент в методе save");
             return;
         }
         if (size < 10000) storage[size++] = r;
@@ -26,24 +26,24 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        if (r == null || get(r.getUuid()) == null) {
-            System.out.println("Недопустимый элемент");
+        if (r == null || getIndex(r.getUuid()) == -1) {
+            System.out.println("Недопустимый элемент в методе update");
             return;
         }
-        delete(r.getUuid());
-        save(r);
+        storage[getIndex(r.getUuid())].setUuid(r.getUuid()); // пока присваиваем саму себе
     }
 
     public Resume get(String uuid) {
-        for (int i = 0; i < size; i++)
-            if (uuid != null && storage[i].getUuid().equals(uuid)) return storage[i];
-        System.out.println("Недопустимый элемент");
-        return null;
+        if (getIndex(uuid) == -1) {
+            System.out.println("Недопустимый элемент в методе get");
+            return null;
+        }
+        else return storage[getIndex(uuid)];
     }
 
     public void delete(String uuid) {
-        if (uuid == null || get(uuid) == null) {
-            System.out.println("Недопустимый элемент");
+        if (getIndex(uuid) == -1) {
+            System.out.println("Недопустимый элемент в методе delete");
             return;
         }
         for (int i = 0; i < size; i++)
@@ -61,6 +61,12 @@ public class ArrayStorage {
         Resume[] result = new Resume[size];
         System.arraycopy(storage, 0, result, 0, size);
         return result;
+    }
+
+    public int getIndex (String uuid) {
+        for (int i = 0; i < size; i++)
+            if (uuid != null && storage[i].getUuid().equals(uuid)) return i;
+        return -1;
     }
 
     public int size() {
