@@ -1,7 +1,7 @@
-package com.urise.webapp.model;
+package ru.javawebinar.basejava.model;
 
 /**
- * com.urise.webapp.model.com.urise.webapp.model.Resume class
+ * com.urise.webapp.model.Resume class
  */
 public class Resume {
 
