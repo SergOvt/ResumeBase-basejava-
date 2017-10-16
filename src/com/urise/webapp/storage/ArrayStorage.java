@@ -26,32 +26,31 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        if (r == null || getIndex(r.getUuid()) == -1) {
+        int index;
+        if (r == null || (index = getIndex(r.getUuid())) == -1) {
             System.out.println("Недопустимый элемент в методе update");
             return;
         }
-        storage[getIndex(r.getUuid())].setUuid(r.getUuid()); // пока присваиваем саму себе
+        storage[index].setUuid(r.getUuid()); // пока присваиваем саму себе
     }
 
     public Resume get(String uuid) {
-        if (getIndex(uuid) == -1) {
+        int index = getIndex(uuid);
+        if (index == -1) {
             System.out.println("Недопустимый элемент в методе get");
             return null;
         }
-        else return storage[getIndex(uuid)];
+        else return storage[index];
     }
 
     public void delete(String uuid) {
-        if (getIndex(uuid) == -1) {
+        int index = getIndex(uuid);
+        if (index == -1) {
             System.out.println("Недопустимый элемент в методе delete");
             return;
         }
-        for (int i = 0; i < size; i++)
-            if (storage[i].getUuid().equals(uuid)) {
-                storage[i] = storage[--size];
-                storage[size] = null;
-                break;
-            }
+        storage[index] = storage[--size];
+        storage[size] = null;
     }
 
     /**
@@ -63,7 +62,7 @@ public class ArrayStorage {
         return result;
     }
 
-    public int getIndex (String uuid) {
+    private int getIndex (String uuid) {
         for (int i = 0; i < size; i++)
             if (uuid != null && storage[i].getUuid().equals(uuid)) return i;
         return -1;
