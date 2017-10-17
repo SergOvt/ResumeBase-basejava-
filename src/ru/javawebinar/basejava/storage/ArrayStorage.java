@@ -11,7 +11,7 @@ public class ArrayStorage extends AbstractArrayStorage {
         if (index == -1) {
             System.out.println("Resume " + uuid + " not exist");
         } else {
-            storage[index] = storage[size--];
+            storage[index] = storage[--size];
             storage[size] = null;
         }
     }
