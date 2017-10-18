@@ -6,11 +6,10 @@ import java.util.Arrays;
 
 public class SortedArrayStorage extends AbstractArrayStorage{
 
-    public void deleteByIndex(int index) {
+    public void fillByIndex(int index) {
             int numMoved = size - index - 1;
             if (numMoved > 0)
             System.arraycopy(storage, index + 1, storage, index, numMoved);
-            storage[--size] = null;
     }
 
     protected int getIndex(String uuid) {

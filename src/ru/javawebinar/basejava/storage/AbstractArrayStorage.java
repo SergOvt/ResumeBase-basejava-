@@ -52,7 +52,8 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index < 0) {
             System.out.println("Resume " + uuid + " not exist");
         } else {
-           deleteByIndex(index);
+           fillByIndex(index);
+           storage[--size] = null;
         }
     }
 
@@ -66,6 +67,6 @@ public abstract class AbstractArrayStorage implements Storage {
 
     protected abstract int getIndex(String uuid);
 
-    protected abstract void deleteByIndex(int index);
+    protected abstract void fillByIndex(int index);
 
 }

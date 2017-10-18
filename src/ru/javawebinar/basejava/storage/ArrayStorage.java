@@ -6,9 +6,8 @@ package ru.javawebinar.basejava.storage;
  */
 public class ArrayStorage extends AbstractArrayStorage {
 
-    public void deleteByIndex(int index) {
-            storage[index] = storage[--size];
-            storage[size] = null;
+    public void fillByIndex(int index) {
+            storage[index] = storage[size - 1];
     }
 
     protected int getIndex(String uuid) {
