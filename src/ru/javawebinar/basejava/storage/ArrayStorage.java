@@ -6,14 +6,9 @@ package ru.javawebinar.basejava.storage;
  */
 public class ArrayStorage extends AbstractArrayStorage {
 
-    public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index == -1) {
-            System.out.println("Resume " + uuid + " not exist");
-        } else {
+    public void deleteByIndex(int index) {
             storage[index] = storage[--size];
             storage[size] = null;
-        }
     }
 
     protected int getIndex(String uuid) {
