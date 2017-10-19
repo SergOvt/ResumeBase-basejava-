@@ -1,7 +1,6 @@
 package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
-
 import java.util.Arrays;
 
 /**
@@ -28,12 +27,13 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void save(Resume r) {
-        if (getIndex(r.getUuid()) > -1) {
+        int index = getIndex(r.getUuid());
+        if (index > -1) {
             System.out.println("Resume " + r.getUuid() + " already exist");
         } else if (size >= STORAGE_LIMIT) {
             System.out.println("Storage overflow");
         } else {
-            storage[size] = r;
+            saveByIndex(r, index);
             size++;
         }
     }
@@ -52,7 +52,7 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index < 0) {
             System.out.println("Resume " + uuid + " not exist");
         } else {
-           fillByIndex(index);
+           deleteByIndex(index);
            storage[--size] = null;
         }
     }
@@ -67,6 +67,8 @@ public abstract class AbstractArrayStorage implements Storage {
 
     protected abstract int getIndex(String uuid);
 
-    protected abstract void fillByIndex(int index);
+    protected abstract void deleteByIndex(int index);
+
+    protected abstract void saveByIndex(Resume r, int index);
 
 }
