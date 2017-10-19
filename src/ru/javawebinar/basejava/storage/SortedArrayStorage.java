@@ -19,8 +19,8 @@ public class SortedArrayStorage extends AbstractArrayStorage{
     }
 
     protected void saveByIndex(Resume r, int index) {
-        int fillIndex = Math.abs(index)-1;
-        System.arraycopy(storage, fillIndex, storage, fillIndex + 1, size - fillIndex + 2);
+        int fillIndex = Math.abs(index) - 1;
+        System.arraycopy(storage, fillIndex, storage, fillIndex + 1, size - fillIndex);
         storage[fillIndex] = r;
     }
 }
