@@ -1,7 +1,5 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
-import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.HashMap;
@@ -9,36 +7,11 @@ import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
 
+    static {
+        STORAGE_LIMIT = Integer.MAX_VALUE - 8; // size() is int, do like ListStorage
+    }
+
     private final Map<String, Resume> storage = new HashMap<>();
-
-    @Override
-    public void clear() {
-        storage.clear();
-    }
-
-    @Override
-    public void update(Resume r) {
-        if (!storage.containsKey(r.getUuid())) throw new NotExistStorageException(r.getUuid());
-        else storage.put(r.getUuid(), r);
-    }
-
-    @Override
-    public void save(Resume r) {
-        if (storage.containsKey(r.getUuid())) throw new ExistStorageException(r.getUuid());
-        else storage.put(r.getUuid(), r);
-    }
-
-    @Override
-    public Resume get(String uuid) {
-        if (!storage.containsKey(uuid)) throw new NotExistStorageException(uuid);
-        return storage.get(uuid);
-    }
-
-    @Override
-    public void delete(String uuid) {
-        if (!storage.containsKey(uuid)) throw new NotExistStorageException(uuid);
-        else storage.remove(uuid);
-    }
 
     @Override
     public Resume[] getAll() {
@@ -46,7 +19,37 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public int size() {
-        return storage.size();
+    protected int getIndex (Resume r) {
+        return -1;  // not allowed here
+    }
+
+    @Override
+    protected void doClear() {
+        storage.clear();
+    }
+
+    @Override
+    protected boolean isExist(Resume r) {
+        return storage.containsKey(r.getUuid());
+    }
+
+    @Override
+    protected void doUpdate(Resume r) {
+        storage.put(r.getUuid(), r);
+    }
+
+    @Override
+    public void doSave(Resume r) {
+        storage.put(r.getUuid(), r);
+    }
+
+    @Override
+    public void doDelete(String uuid) {
+        storage.remove(uuid);
+    }
+
+    @Override
+    public Resume doGet(String uuid) {
+        return storage.get(uuid);
     }
 }

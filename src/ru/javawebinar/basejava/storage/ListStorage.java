@@ -1,7 +1,5 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
-import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.ArrayList;
@@ -9,52 +7,44 @@ import java.util.List;
 
 public class ListStorage extends AbstractStorage {
 
+    static {
+        STORAGE_LIMIT = Integer.MAX_VALUE - 8; // Like java.util.ArrayList
+    }
+
     private final List<Resume> storage = new ArrayList<>();
-
-    @Override
-    public void clear() {
-        storage.clear();
-    }
-
-    @Override
-    public void update(Resume r) {
-            storage.set(getExistIndex(r), r);
-    }
-
-    @Override
-    public void save(Resume r) {
-        int index = storage.indexOf(r);
-        if (index != -1) {
-            throw new ExistStorageException(r.getUuid());
-        } else {
-            storage.add(r);
-        }
-    }
-
-    @Override
-    public Resume get(String uuid) {
-        return storage.get(getExistIndex(new Resume(uuid)));
-    }
-
-    @Override
-    public void delete(String uuid) {
-            storage.remove(getExistIndex(new Resume(uuid)));
-    }
 
     @Override
     public Resume[] getAll() {
         return storage.toArray(new Resume[storage.size()]);
     }
 
-    @Override
-    public int size() {
-        return storage.size();
+    protected int getIndex (Resume r) {
+        return storage.indexOf(r);
     }
 
-    private int getExistIndex (Resume r) {
-        int index = storage.indexOf(r);
-        if (index == -1)
-            throw new NotExistStorageException(r.getUuid());
-        return index;
+    @Override
+    protected void doClear() {
+        storage.clear();
     }
+
+    @Override
+    protected void doUpdate(Resume r) {
+        storage.set(getIndex(r), r);
+    }
+
+    @Override
+    public void doSave(Resume r) {
+            storage.add(r);
+    }
+
+    @Override
+    public void doDelete(String uuid) {
+        storage.remove(getIndex(new Resume(uuid)));
+    }
+
+    @Override
+    public Resume doGet(String uuid) {
+        return storage.get(getIndex(new Resume(uuid)));
+    }
+
 }

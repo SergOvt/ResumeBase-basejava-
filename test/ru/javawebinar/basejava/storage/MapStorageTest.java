@@ -2,6 +2,12 @@ package ru.javawebinar.basejava.storage;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import ru.javawebinar.basejava.model.Resume;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class MapStorageTest extends AbstractArrayStorageTest {
@@ -12,13 +18,7 @@ public class MapStorageTest extends AbstractArrayStorageTest {
 
     @Test
     public void saveOverflow() throws Exception {
-
-    }
-
-    @Test
-    @Ignore
-    public void getAll() throws Exception {
-        // fail order
+        // don't need
     }
 
 }
