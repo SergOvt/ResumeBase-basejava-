@@ -7,11 +7,17 @@ import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
 
-    static {
-        STORAGE_LIMIT = Integer.MAX_VALUE - 8; // size() is int, do like ListStorage
+    private final Map<String, Resume> storage = new HashMap<>();
+
+    @Override
+    public int size() {
+        return storage.size();
     }
 
-    private final Map<String, Resume> storage = new HashMap<>();
+    @Override
+    public void clear() {
+        storage.clear();
+    }
 
     @Override
     public Resume[] getAll() {
@@ -19,37 +25,34 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected int getIndex (Resume r) {
-        return -1;  // not allowed here
+    protected boolean isExist(Object key) {
+        return storage.containsKey((String)key);
     }
 
     @Override
-    protected void doClear() {
-        storage.clear();
+    protected void doUpdate(Resume r, Object key) {
+        storage.put((String)key, r);
     }
 
     @Override
-    protected boolean isExist(Resume r) {
-        return storage.containsKey(r.getUuid());
+    public void doSave(Resume r, Object key) {
+        storage.put((String)key, r);
     }
 
     @Override
-    protected void doUpdate(Resume r) {
-        storage.put(r.getUuid(), r);
+    public void doDelete(Object key) {
+        storage.remove((String)key);
     }
 
     @Override
-    public void doSave(Resume r) {
-        storage.put(r.getUuid(), r);
+    public Resume doGet(Object key) {
+        return storage.get((String)key);
     }
 
     @Override
-    public void doDelete(String uuid) {
-        storage.remove(uuid);
+    protected String getKeyOrIndex(String uuid) {
+        return uuid;
     }
 
-    @Override
-    public Resume doGet(String uuid) {
-        return storage.get(uuid);
-    }
+
 }

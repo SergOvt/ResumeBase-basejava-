@@ -7,44 +7,52 @@ import java.util.List;
 
 public class ListStorage extends AbstractStorage {
 
-    static {
-        STORAGE_LIMIT = Integer.MAX_VALUE - 8; // Like java.util.ArrayList
+    private final List<Resume> storage = new ArrayList<>();
+
+    @Override
+    public int size() {
+        return storage.size();
     }
 
-    private final List<Resume> storage = new ArrayList<>();
+    @Override
+    public void clear() {
+        storage.clear();
+    }
 
     @Override
     public Resume[] getAll() {
         return storage.toArray(new Resume[storage.size()]);
     }
 
-    protected int getIndex (Resume r) {
-        return storage.indexOf(r);
+    @Override
+    protected boolean isExist(Object index) {
+        return (Integer)index > -1;
+    }
+
+    protected Integer getKeyOrIndex(String uuid) {
+        for (int i = 0; i < storage.size(); i++)
+            if (storage.get(i).getUuid().equals(uuid)) return i;
+        return -1;
     }
 
     @Override
-    protected void doClear() {
-        storage.clear();
+    protected void doUpdate(Resume r, Object index) {
+        storage.set((Integer)index, r);
     }
 
     @Override
-    protected void doUpdate(Resume r) {
-        storage.set(getIndex(r), r);
-    }
-
-    @Override
-    public void doSave(Resume r) {
+    public void doSave(Resume r, Object index) {
             storage.add(r);
     }
 
     @Override
-    public void doDelete(String uuid) {
-        storage.remove(getIndex(new Resume(uuid)));
+    public void doDelete(Object index) {
+        storage.remove(((Integer) index).intValue());
     }
 
     @Override
-    public Resume doGet(String uuid) {
-        return storage.get(getIndex(new Resume(uuid)));
+    public Resume doGet(Object index) {
+        return storage.get((Integer)index);
     }
 
 }
