@@ -18,9 +18,10 @@ public abstract class AbstractStorage implements Storage {
     public abstract Resume[] getAll();
 
     public void save(Resume r) {
-        if (isExist(getKeyOrIndex(r.getUuid()))) {
+        Object existKey = getKeyOrIndex(r.getUuid());
+        if (isExist(existKey)) {
             throw new ExistStorageException(r.getUuid());
-        } else doSave(r, getKeyOrIndex(r.getUuid()));
+        } else doSave(r, existKey);
     }
 
     public void delete(String uuid) {
@@ -44,9 +45,10 @@ public abstract class AbstractStorage implements Storage {
     protected abstract Object getKeyOrIndex(String uuid);
 
     private Object getExistKey (String uuid) {
-        if (!isExist(getKeyOrIndex(uuid)))
+        Object existKey = getKeyOrIndex(uuid);
+        if (!isExist(existKey))
             throw new NotExistStorageException(uuid);
-        return getKeyOrIndex(uuid);
+        return existKey;
     }
 
 }
