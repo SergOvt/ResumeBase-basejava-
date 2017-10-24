@@ -53,4 +53,5 @@ public class MapUuidStorage extends AbstractStorage {
     public int size() {
         return 0;
     }
+
 }
