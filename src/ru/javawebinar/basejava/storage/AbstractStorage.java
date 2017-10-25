@@ -20,6 +20,8 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void doDelete(Object searchKey);
 
+    protected abstract List<Resume> getList();
+
     public void update(Resume r) {
         Object searchKey = getExistedSearchKey(r.getUuid());
         doUpdate(r, searchKey);
@@ -56,8 +58,8 @@ public abstract class AbstractStorage implements Storage {
         return searchKey;
     }
 
-    public List<Resume> getSortedList(Collection<Resume> collection) {
-        List<Resume> sortedList = new ArrayList<>(collection);
+    public List<Resume> getAllSorted() {
+        List<Resume> sortedList = getList();
         sortedList.sort(Comparator.comparing(Resume::getFullName));
         return sortedList;
     }

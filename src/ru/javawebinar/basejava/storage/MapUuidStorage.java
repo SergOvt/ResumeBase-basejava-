@@ -22,8 +22,8 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        return getSortedList(map.values());
+    public List<Resume> getList() {
+        return new ArrayList<>(map.values());
     }
 
     @Override
