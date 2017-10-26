@@ -54,5 +54,6 @@ public class MapUuidStorage extends AbstractStorage {
     @Override
     protected String getSearchKey (String uuid) {
         return uuid;
+
     }
 }
