@@ -12,7 +12,7 @@ public class Resume implements Comparable<Resume> {
     private final String fullName;
 
 
-    private final Map<String, String> contacts = new HashMap<>();
+    private final Map<Contacts, String> contacts = new HashMap<>();
     private final Map<SectionType, Section> sections = new HashMap<>();
 
 
@@ -65,7 +65,7 @@ public class Resume implements Comparable<Resume> {
         return fullName;
     }
 
-    public Map<String, String> getContacts() {
+    public Map<Contacts, String> getContacts() {
         return contacts;
     }
 
@@ -73,112 +73,4 @@ public class Resume implements Comparable<Resume> {
         return sections;
     }
 
-
-
-
-    public abstract class Section {
-
-        abstract Object getSection();
-    }
-
-
-    public class SingleTextSection extends Section{
-        private String section;
-
-        public SingleTextSection(String section) {
-            this.section = section;
-        }
-
-        public String getSection() {
-            return section;
-        }
-
-        public void setSection(String section) {
-            this.section = section;
-        }
-
-        @Override
-        public String toString() {
-            return section;
-        }
-    }
-
-
-    public class MultiTextSection extends Section{
-        private List<String> section;
-
-        public MultiTextSection(List<String> section) {
-            this.section = section;
-        }
-
-        public List<String> getSection() {
-            return section;
-        }
-
-        @Override
-        public String toString() {
-            return section.toString();
-        }
-    }
-
-
-    public class ExperienceTypeSection extends Section{
-        private List<ExperienceType> section;
-
-        public ExperienceTypeSection(List<ExperienceType> section) {
-            this.section = section;
-        }
-
-        public List<ExperienceType> getSection() {
-            return section;
-        }
-
-        @Override
-        public String toString() {
-            return section.toString();
-        }
-
-    }
-
-
-    public class ExperienceType{
-        private String title;
-        private String date;
-        private String content;
-
-        public ExperienceType(String title, String date, String content) {
-            this.title = title;
-            this.date = date;
-            this.content = content;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getDate() {
-            return date;
-        }
-
-        public void setDate(String date) {
-            this.date = date;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public void setContent(String content) {
-            this.content = content;
-        }
-
-        @Override
-        public String toString() {
-            return title + '\n' + date + '\t' + content;
-        }
-    }
 }
