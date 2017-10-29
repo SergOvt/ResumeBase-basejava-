@@ -1,6 +1,12 @@
 package ru.javawebinar.basejava;
 
+import ru.javawebinar.basejava.model.Resume;
 import ru.javawebinar.basejava.model.SectionType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 
 public class TestSingleton {
     private static TestSingleton instance;
@@ -23,6 +29,7 @@ public class TestSingleton {
         for (SectionType type : SectionType.values()) {
             System.out.println(type.getTitle());
         }
+
     }
 
     public enum Singleton {
