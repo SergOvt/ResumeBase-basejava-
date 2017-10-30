@@ -1,5 +1,7 @@
 package ru.javawebinar.basejava;
 
+import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,7 +12,7 @@ import java.io.IOException;
  */
 public class MainFile {
     public static void main(String[] args) {
-        String filePath = ".\\.gitignore";
+        /*String filePath = "./.gitignore";
 
         File file = new File(filePath);
         try {
@@ -32,6 +34,31 @@ public class MainFile {
             System.out.println(fis.read());
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }*/
+
+        File dir = new File("./src/ru/javawebinar/basejava");
+        getFileList(dir, 0);
+
+
+    }
+
+    private static void getFileList(File dir, int pos) {
+        File[] listFiles = dir.listFiles();
+        for (File file : listFiles) {
+            if (file.isFile()) {
+                for (int i = 0; i < pos; i++)
+                    System.out.print("\t");
+                System.out.println(file.getName());
+            }
+            else {
+                for (int i = 0; i < pos; i++)
+                    System.out.print("\t");
+                System.out.println("-" + file.getName());
+                int position = pos + 1;
+                getFileList(file, position);
+            }
         }
     }
+
+
 }
