@@ -35,7 +35,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             if (file.isFile()) {
                 if (!file.delete()) throw new StorageException("IO error", file.getName());
             }
-            else deleteDirectory(file);
+            else if (file.isDirectory()) deleteDirectory(file);
         }
 
     }
@@ -105,7 +105,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         }
         for (File file : files) {
             if (file.isDirectory()) deleteDirectory(file);
-            else if (!file.delete()) throw new StorageException("IO error", dir.getName());
+            else if (!file.isFile() || !file.delete()) throw new StorageException("IO error", dir.getName());
         }
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         if (files == null) throw new StorageException("IO error", dir.getName());
         for (File file : files) {
             if (file.isFile()) result++;
-            else result += getSize(file);
+            else if (file.isDirectory()) result += getSize(file);
         }
         return result;
     }
@@ -126,7 +126,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         if (files == null) throw new StorageException("IO error", dir.getName());
         for (File file : files) {
             if (file.isFile()) result.add(doGet(file));
-            else result.addAll(getFiles(file));
+            else if (file.isDirectory()) result.addAll(getFiles(file));
         }
         return result;
     }

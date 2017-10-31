@@ -44,6 +44,7 @@ public class MainFile {
 
     private static void getFileList(File dir, int pos) {
         File[] listFiles = dir.listFiles();
+        if (listFiles == null) return;
         for (File file : listFiles) {
             if (file.isFile()) {
                 for (int i = 0; i < pos; i++)
