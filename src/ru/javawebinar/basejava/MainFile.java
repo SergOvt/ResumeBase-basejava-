@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class MainFile {
     public static void main(String[] args) {
-        String filePath = ".\\.gitignore";
+        String filePath = "./.gitignore";
 
         File file = new File(filePath);
         try {
@@ -33,22 +33,25 @@ public class MainFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        printDirectoryDeeply(dir);
+        printDirectoryDeeply(dir,0);
     }
 
     // TODO: make pretty output
-    public static void printDirectoryDeeply(File dir) {
-        File[] files = dir.listFiles();
-
-        if (files != null) {
-            for (File file : files) {
+        private static void printDirectoryDeeply(File dir, int pos) {
+            File[] listFiles = dir.listFiles();
+            if (listFiles == null) return;
+            for (File file : listFiles) {
+                for (int i = 0; i < pos; i++) {
+                    System.out.print("\t");
+                }
                 if (file.isFile()) {
-                    System.out.println("File: " + file.getName());
-                } else if (file.isDirectory()) {
-                    System.out.println("Directory: " + file.getName());
-                    printDirectoryDeeply(file);
+                    System.out.println(file.getName());
+                }
+                else {
+                    System.out.println("-" + file.getName());
+                    int position = pos + 1;
+                    printDirectoryDeeply(file, position);
                 }
             }
-        }
     }
 }
