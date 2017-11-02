@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("C:\\projects\\basejava\\storage");
+    protected static final File STORAGE_DIR = new File("/Users/Sergo/temp");
 
     protected Storage storage;
 
@@ -54,7 +54,7 @@ public abstract class AbstractStorageTest {
                         new Organization("Organization12", "http://Organization12.ru")));
         R2.addContact(ContactType.SKYPE, "skype2");
         R2.addContact(ContactType.PHONE, "22222");
-        R1.addSection(SectionType.EXPERIENCE,
+        R2.addSection(SectionType.EXPERIENCE,
                 new OrganizationSection(
                         new Organization("Organization2", "http://Organization2.ru",
                                 new Organization.Position(2015, Month.JANUARY, "position1", "content1"))));
