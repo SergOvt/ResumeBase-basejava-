@@ -24,41 +24,40 @@ public class DataStreamSerializer implements StreamSerializer {
 
             // TODO implements sections
 
-            for (SectionType sectionType : SectionType.values()) {
-                dos.writeUTF(sectionType.name());
-                if (r.getSections().containsKey(sectionType)) {
-                    Section section = r.getSection(sectionType);
-                    if (section instanceof TextSection) {
-                        dos.writeInt(1);
-                        TextSection textSection = (TextSection)section;
-                        dos.writeUTF(textSection.getContent());
+            for (Map.Entry<SectionType, Section> entry : r.getSections().entrySet()) {
+                dos.writeUTF(entry.getKey().name());
+                Section section = entry.getValue();
+
+                if (section instanceof TextSection) {
+                    TextSection textSection = (TextSection) section;
+                    dos.writeUTF(textSection.getContent());
+                }
+
+                if (section instanceof ListSection) {
+                    ListSection listSection = (ListSection) section;
+                    dos.writeInt(listSection.getItems().size());
+                    for (String item : listSection.getItems()) {
+                        dos.writeUTF(item);
                     }
-                    if (section instanceof ListSection) {
-                        ListSection listSection = (ListSection)section;
-                        dos.writeInt(listSection.getItems().size());
-                        for (String item : listSection.getItems()) {
-                            dos.writeUTF(item);
-                        }
-                    }
-                    if (section instanceof OrganizationSection) {
-                        OrganizationSection organizationSection = (OrganizationSection)section;
-                        dos.writeInt(organizationSection.getOrganizations().size());
-                        for (Organization organization : organizationSection.getOrganizations()) {
-                            dos.writeUTF(organization.getHomePage().getName());
-                            String url = organization.getHomePage().getUrl();
-                            dos.writeUTF(url == null ? "NULL" : url);
-                            dos.writeInt(organization.getPositions().size());
-                            for (Organization.Position pos : organization.getPositions()) {
-                                dos.writeUTF(pos.getStartDate().toString());
-                                dos.writeUTF(pos.getEndDate().toString());
-                                dos.writeUTF(pos.getTitle());
-                                String desc = pos.getDescription();
-                                dos.writeUTF(desc == null ? "NULL" : desc);
-                            }
+                }
+
+                if (section instanceof OrganizationSection) {
+                    OrganizationSection organizationSection = (OrganizationSection) section;
+                    dos.writeInt(organizationSection.getOrganizations().size());
+                    for (Organization organization : organizationSection.getOrganizations()) {
+                        dos.writeUTF(organization.getHomePage().getName());
+                        String url = organization.getHomePage().getUrl();
+                        dos.writeUTF(url == null ? "NULL" : url);
+                        dos.writeInt(organization.getPositions().size());
+                        for (Organization.Position pos : organization.getPositions()) {
+                            dos.writeUTF(pos.getStartDate().toString());
+                            dos.writeUTF(pos.getEndDate().toString());
+                            dos.writeUTF(pos.getTitle());
+                            String desc = pos.getDescription();
+                            dos.writeUTF(desc == null ? "NULL" : desc);
                         }
                     }
                 }
-                else dos.writeInt(0);
             }
         }
     }
@@ -78,15 +77,18 @@ public class DataStreamSerializer implements StreamSerializer {
 
             while (dis.available() > 0) {
                 String sectionName = dis.readUTF();
-                int countSections = dis.readInt();
 
-                if (countSections != 0) {
-                    if (sectionName.equals("PERSONAL") || sectionName.equals("OBJECTIVE"))
-                        resume.addSection(SectionType.valueOf(sectionName), new TextSection(dis.readUTF()));
-                    if (sectionName.equals("ACHIEVEMENT") || sectionName.equals("QUALIFICATIONS"))
-                        resume.addSection(SectionType.valueOf(sectionName), new ListSection(readListSection(dis, countSections)));
-                    if (sectionName.equals("EXPERIENCE") || sectionName.equals("EDUCATION"))
-                        resume.addSection(SectionType.valueOf(sectionName), new OrganizationSection(readOrganizationSection(dis, countSections)));
+                if (sectionName.equals("PERSONAL") || sectionName.equals("OBJECTIVE"))
+                    resume.addSection(SectionType.valueOf(sectionName), new TextSection(dis.readUTF()));
+
+                if (sectionName.equals("ACHIEVEMENT") || sectionName.equals("QUALIFICATIONS")) {
+                    int countSections = dis.readInt();
+                    resume.addSection(SectionType.valueOf(sectionName), new ListSection(readListSection(dis, countSections)));
+                }
+
+                if (sectionName.equals("EXPERIENCE") || sectionName.equals("EDUCATION")) {
+                    int countSections = dis.readInt();
+                    resume.addSection(SectionType.valueOf(sectionName), new OrganizationSection(readOrganizationSection(dis, countSections)));
                 }
             }
             return resume;
