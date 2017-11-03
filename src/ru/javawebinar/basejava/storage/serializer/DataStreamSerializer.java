@@ -25,10 +25,11 @@ public class DataStreamSerializer implements StreamSerializer {
             // TODO implements sections
 
             for (Map.Entry<SectionType, Section> entry : r.getSections().entrySet()) {
-                dos.writeUTF(entry.getKey().name());
+                String sectionName = entry.getKey().name();
+                dos.writeUTF(sectionName);
                 Section section = entry.getValue();
 
-                switch (entry.getKey().name()) {
+                switch (sectionName) {
                     case "PERSONAL":
                     case "OBJECTIVE":
                         TextSection textSection = (TextSection) section;
