@@ -7,16 +7,20 @@ import ru.javawebinar.basejava.sql.ConnectionFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.function.Consumer;
 
-public class SqlHelper {
+@FunctionalInterface
+public interface SqlHelper<T> {
 
-    static <T> void doExecute (ConnectionFactory connectionFactory, String sql, T param, Consumer<T> consumer) {
+
+    T accept(PreparedStatement ps) throws SQLException;
+
+    static <T> T doExecute (ConnectionFactory connectionFactory, String sql, SqlHelper<T> consumer) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            consumer.accept(param);
+            return consumer.accept(ps);
         } catch (SQLException e) {
             throw new StorageException(e);
         }
     }
+
 }
