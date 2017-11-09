@@ -3,26 +3,25 @@ package ru.javawebinar.basejava.storage;
 import org.postgresql.util.PSQLException;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
+import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
-import ru.javawebinar.basejava.sql.ConnectionFactory;
-import ru.javawebinar.basejava.sql.SqlHelper;
+import ru.javawebinar.basejava.sql.Executor;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class SqlStorage implements Storage {
-    public final ConnectionFactory connectionFactory;
+public class SqlStorage extends Executor implements Storage {
     private static final Logger LOG = Logger.getLogger(SqlStorage.class.getName());
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
-        connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+        super(dbUrl, dbUser, dbPassword);
     }
 
     @Override
     public void clear() {
-        SqlHelper.doExecute(connectionFactory, "DELETE FROM resume", ps -> {
+        Executor.doExecute("DELETE FROM resume", ps -> {
             ps.execute();
             LOG.info("Clear storage");
             return null;
@@ -31,7 +30,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        return SqlHelper.doExecute(connectionFactory, "SELECT * FROM resume r WHERE r.uuid = ?", ps -> {
+        return Executor.doExecute("SELECT * FROM resume r WHERE r.uuid = ?", ps -> {
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) throw new NotExistStorageException(uuid);
@@ -42,7 +41,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void update(Resume r) {
-        SqlHelper.doExecute(connectionFactory, "UPDATE resume SET full_name = ? WHERE uuid = ?", ps -> {
+        Executor.doExecute("UPDATE resume SET full_name = ? WHERE uuid = ?", ps -> {
             ps.setString(1, r.getFullName());
             ps.setString(2, r.getUuid());
             if (ps.executeUpdate() != 1) throw new NotExistStorageException(r.getUuid());
@@ -53,7 +52,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        SqlHelper.doExecute(connectionFactory, "INSERT INTO resume (uuid, full_name) VALUES (?,?)", ps -> {
+        Executor.doExecute("INSERT INTO resume (uuid, full_name) VALUES (?,?)", ps -> {
             try {
                 ps.setString(1, r.getUuid());
                 ps.setString(2, r.getFullName());
@@ -68,7 +67,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        SqlHelper.doExecute(connectionFactory, "DELETE FROM resume r WHERE r.uuid = ?", ps -> {
+        Executor.doExecute("DELETE FROM resume r WHERE r.uuid = ?", ps -> {
             ps.setString(1, uuid);
             if (ps.executeUpdate() != 1) throw new NotExistStorageException(uuid);
             LOG.info("Delete " + uuid);
@@ -78,7 +77,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return SqlHelper.doExecute(connectionFactory, "SELECT * FROM resume r ORDER BY r.full_name, r.uuid", ps -> {
+        return Executor.doExecute("SELECT * FROM resume r ORDER BY r.full_name, r.uuid", ps -> {
             List<Resume> resultList = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -91,10 +90,10 @@ public class SqlStorage implements Storage {
 
     @Override
     public int size() {
-        return SqlHelper.doExecute(connectionFactory, "SELECT COUNT(*) FROM resume", ps -> {
+        return Executor.doExecute("SELECT COUNT(*) FROM resume", ps -> {
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
+            if (rs.next()) return rs.getInt(1);
+            else throw new StorageException("Do not have table resume");
         });
     }
 }
