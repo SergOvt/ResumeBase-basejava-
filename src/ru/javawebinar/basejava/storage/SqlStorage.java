@@ -125,14 +125,14 @@ public class SqlStorage implements Storage {
     private Resume getFromResultSet(ResultSet rs) throws SQLException {
         String uuid = rs.getString("uuid");
         Resume r = new Resume(uuid, rs.getString("full_name"));
-        while (!rs.isAfterLast() && uuid.equals(rs.getString("uuid"))) {
+        do {
             String value = rs.getString("value");
             if (value != null) {
                 ContactType type = ContactType.valueOf(rs.getString("type"));
                 r.addContact(type, value);
             }
-            rs.next();
-        }
+        } while (rs.next() && uuid.equals(rs.getString("uuid")));
+
         return r;
     }
 
