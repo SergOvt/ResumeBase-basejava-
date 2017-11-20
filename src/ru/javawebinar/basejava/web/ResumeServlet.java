@@ -36,6 +36,7 @@ public class ResumeServlet extends HttpServlet {
                 r.getContacts().remove(type);
             }
         }
+
         storage.update(r);
         response.sendRedirect("resume");
     }
