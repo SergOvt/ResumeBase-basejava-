@@ -47,12 +47,10 @@
         <input type="text" name="PERSONAL" size=60 value="${resume.getSection(SectionType.PERSONAL).getContent()}"><br/>
 
         <h3>${SectionType.ACHIEVEMENT.title}:</h3>
-        <div id="achievId"></div>
         <c:forEach var="achieve" items="${resume.getSection(SectionType.ACHIEVEMENT).getItems()}">
             <input type="text" name="ACHIEVEMENT" size=60 value="${achieve}" required>
             <br/><br/>
         </c:forEach>
-        </div>
 
         <h3>${SectionType.QUALIFICATIONS.title}:</h3>
         <c:forEach var="qualif" items="${resume.getSection(SectionType.QUALIFICATIONS).getItems()}">
