@@ -15,8 +15,7 @@
         <tr>
             <th>Имя</th>
             <th>Email</th>
-            <th></th>
-            <th></th>
+            <th colspan="2"><a href="resume?action=create"><img src="img/add.png"></a></th>
         </tr>
         <c:forEach items="${resumes}" var="resume">
             <jsp:useBean id="resume" type="ru.javawebinar.basejava.model.Resume"/>
@@ -28,6 +27,7 @@
             </tr>
         </c:forEach>
     </table>
+
 </section>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
