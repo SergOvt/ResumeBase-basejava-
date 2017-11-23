@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 import static ru.javawebinar.basejava.TestData.*;
 
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = Config.get().getStorageDir();
+    protected static final File STORAGE_DIR = new File ("/Users/Sergo/test");
 
     protected Storage storage;
 
