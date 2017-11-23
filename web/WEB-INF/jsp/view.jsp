@@ -76,7 +76,7 @@
             </c:choose>
         </c:forEach>
     </table>
-    <hr>
+    <br/>
     <button onclick="window.history.back()">Ok</button>
 </section>
 <jsp:include page="fragments/footer.jsp"/>

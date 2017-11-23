@@ -47,8 +47,17 @@
         </div>
         <c:forEach var="achieve" items="${resume.getSection(SectionType.ACHIEVEMENT).getItems()}">
             <div>
-                <input type="text" name="ACHIEVEMENT" size=60 value="${achieve}" required>
-                <a onclick="return deleteField(this)" href="#"><img src="img/delete.png"></a><br/>
+                <table>
+                    <tr>
+                        <td>
+                            <textarea name="ACHIEVEMENT" rows="5" cols="58" style="resize: none"
+                                      required>${achieve}</textarea>
+                        </td>
+                        <td>
+                            <a onclick="return deleteBlock(this)" href="#"><img src="img/delete.png"></a>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </c:forEach>
 
@@ -57,8 +66,17 @@
         </div>
         <c:forEach var="qualif" items="${resume.getSection(SectionType.QUALIFICATIONS).getItems()}">
             <div>
-                <input type="text" name="QUALIFICATIONS" size=60 value="${qualif}" required>
-                <a onclick="return deleteField(this)" href="#"><img src="img/delete.png"></a><br/>
+                <table>
+                    <tr>
+                        <td>
+                            <textarea name="QUALIFICATIONS" rows="5" cols="58" style="resize: none"
+                                      required>${qualif}</textarea>
+                        </td>
+                        <td>
+                            <a onclick="return deleteBlock(this)" href="#"><img src="img/delete.png"></a>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </c:forEach>
 
@@ -95,8 +113,7 @@
                                 </td>
                                 <td>
                                     Деятельность:<br/>
-                                    <textarea name="expPos" rows="10" cols="103" style="resize: none"
-                                              required>${position.description}</textarea>
+                                    <textarea name="expPos" rows="10" cols="103" style="resize: none">${position.description}</textarea>
                                 </td>
                                 <td>
                                     <a onclick="return deleteBlock(this)" href="#"><img src="img/delete.png"></a>
@@ -139,8 +156,7 @@
                                 </td>
                                 <td>
                                     Деятельность:<br/>
-                                    <textarea name="eduPos" rows="10" cols="103" style="resize: none"
-                                              required>${position.description}</textarea>
+                                    <textarea name="eduPos" rows="10" cols="103" style="resize: none">${position.description}</textarea>
                                 </td>
                                 <td>
                                     <a onclick="return deleteBlock(this)" href="#"><img src="img/delete.png"></a>

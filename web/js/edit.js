@@ -5,8 +5,17 @@ function saveName(org, orgPos) {
 function addField(parentId, section) {
     var currentDiv = document.createElement("div");
     var parentDiv = document.getElementById(parentId);
-    currentDiv.innerHTML = "<input type=\"text\" name=\"" + section + "\" size=60 required> " +
-        "<a onclick=\"return deleteField(this)\" href=\"#\"><img src=\"img/delete.png\"></a>";
+    currentDiv.innerHTML = "<table>" +
+        "                    <tr>" +
+        "                        <td>" +
+        "                            <textarea name=\"" + section + "\" rows=\"5\" cols=\"58\" style=\"resize: none\"" +
+        "                                      required></textarea>" +
+        "                        </td>" +
+        "                        <td>" +
+        "                            <a onclick=\"return deleteBlock(this)\" href=\"#\"><img src=\"img/delete.png\"></a>" +
+        "                        </td>" +
+        "                    </tr>" +
+        "                </table>";
     parentDiv.insertBefore(currentDiv, parentDiv.firstElementChild);
     return false;
 }
@@ -29,7 +38,7 @@ function addPositionBlock(parentId, pos) {
         "                            <td>" +
         "                                Деятельность:<br/>" +
         "                                <textarea name=\"" + pos + "\" rows=\"10\" cols=\"103\" style=\"resize: none\"" +
-        "                                          required></textarea>" +
+        "                                          ></textarea>" +
         "                            </td>" +
         "                            <td>" +
         "                                <a onclick=\"return deleteBlock(this)\" href=\"#\"><img src=\"img/delete.png\"></a>" +
