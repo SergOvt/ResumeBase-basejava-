@@ -12,4 +12,4 @@
      - в контейнер сервлетов <a href="http://tomcat.apache.org/">Tomcat</a>
      - в облачный сервис <a href="https://www.heroku.com/">Heroku</a>
      
-### <a href="http://http://resumesdata.herokuapp.com/" target=_blank>Демо разрабатываемого приложения</a>
+### <a href="http://resumesdata.herokuapp.com/" target=_blank>Демо разрабатываемого приложения</a>

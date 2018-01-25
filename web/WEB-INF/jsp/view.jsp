@@ -1,9 +1,7 @@
-<%@ page import="ru.javawebinar.basejava.model.ListSection" %>
-<%@ page import="ru.javawebinar.basejava.model.OrganizationSection" %>
-<%@ page import="ru.javawebinar.basejava.model.TextSection" %>
-<%@ page import="ru.javawebinar.basejava.util.HtmlUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="ru.javawebinar.basejava.util.DateUtil" %>
+<%@ page import="ru.javawebinar.basejava.util.ContactsUtil" %>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -14,69 +12,61 @@
 <body>
 <jsp:include page="fragments/header.jsp"/>
 <section>
-    <h1>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png"></a></h1>
+    <h2>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png"></a></h2>
     <p>
         <c:forEach var="contactEntry" items="${resume.contacts}">
             <jsp:useBean id="contactEntry"
                          type="java.util.Map.Entry<ru.javawebinar.basejava.model.ContactType, java.lang.String>"/>
-                <%=contactEntry.getKey().toHtml(contactEntry.getValue())%><br/>
+            ${ContactsUtil.toHtml(contactEntry.key, contactEntry.value)}<br/>
         </c:forEach>
     <p>
     <hr>
     <table cellpadding="2">
-        <c:forEach var="sectionEntry" items="${resume.sections}">
-            <jsp:useBean id="sectionEntry"
+        <c:forEach var="section" items="${resume.sections}">
+            <jsp:useBean id="section"
                          type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.Section>"/>
-            <c:set var="type" value="${sectionEntry.key}"/>
-            <c:set var="section" value="${sectionEntry.value}"/>
-            <jsp:useBean id="section" type="ru.javawebinar.basejava.model.Section"/>
             <tr>
-                <td colspan="2"><h2><a name="type.name">${type.title}</a></h2></td>
+                <td colspan="2"><h2>${section.key.title}</h2></td>
             </tr>
             <c:choose>
-                <c:when test="${type=='OBJECTIVE'}">
+                <c:when test="${section.key.name().equals(\"OBJECTIVE\") || section.key.name().equals(\"PERSONAL\")}">
                     <tr>
                         <td colspan="2">
-                            <h3><%=((TextSection) section).getContent()%></h3>
+                            ${section.value.getContent()}
                         </td>
                     </tr>
                 </c:when>
-                <c:when test="${type=='PERSONAL'}">
-                    <tr>
-                        <td colspan="2">
-                            <%=((TextSection) section).getContent()%>
-                        </td>
-                    </tr>
-                </c:when>
-                <c:when test="${type=='QUALIFICATIONS' || type=='ACHIEVEMENT'}">
+                <c:when test="${section.key.name().equals(\"ACHIEVEMENT\") || section.key.name().equals(\"QUALIFICATIONS\")}">
                     <tr>
                         <td colspan="2">
                             <ul>
-                                <c:forEach var="item" items="<%=((ListSection) section).getItems()%>">
-                                    <li>${item}</li>
-                                </c:forEach>
+                            <c:forEach var="piceListSection" items="${section.value.getItems()}">
+                                <li>
+                                    ${piceListSection}
+                                </li>
+                            </c:forEach>
                             </ul>
                         </td>
                     </tr>
                 </c:when>
-                <c:when test="${type=='EXPERIENCE' || type=='EDUCATION'}">
-                    <c:forEach var="org" items="<%=((OrganizationSection) section).getOrganizations()%>">
+                <c:when test="${section.key.name().equals(\"EXPERIENCE\") || section.key.name().equals(\"EDUCATION\")}">
+                    <c:forEach var="organization" items="${section.value.getOrganizations()}">
+                        <jsp:useBean id="organization" type="ru.javawebinar.basejava.model.Organization"/>
                         <tr>
                             <td colspan="2">
-                                <c:choose>
-                                    <c:when test="${empty org.homePage.url}">
-                                        <h3>${org.homePage.name}</h3>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <h3><a href="${org.homePage.url}">${org.homePage.name}</a></h3>
-                                    </c:otherwise>
-                                </c:choose>
+                                <c:if test="${!organization.homePage.url.equals(\"\")}">
+                                    <h3><a href="${organization.homePage.url}">${organization.homePage.name}</a></h3>
+                                </c:if>
+                                <c:if test="${organization.homePage.url.equals(\"\")}">
+                                    <h3>${organization.homePage.name}</h3>
+                                </c:if>
                             </td>
                         </tr>
-                        <c:forEach var="position" items="${org.positions}">
+                        <c:forEach var="position" items="${organization.positions}">
                             <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
                             <tr>
-                                <td width="15%" style="vertical-align: top"><%=HtmlUtil.formatDates(position)%>
+                                <td width="20%" style="vertical-align: top">
+                                        ${DateUtil.printDate(position.startDate)} - ${DateUtil.printDate(position.endDate)}
                                 </td>
                                 <td><b>${position.title}</b><br>${position.description}</td>
                             </tr>
@@ -87,7 +77,7 @@
         </c:forEach>
     </table>
     <br/>
-    <button onclick="window.history.back()">ОК</button>
+    <button onclick="window.history.back()">Ok</button>
 </section>
 <jsp:include page="fragments/footer.jsp"/>
 </body>

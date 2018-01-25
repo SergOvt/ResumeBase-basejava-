@@ -1,15 +1,15 @@
 <%@ page import="ru.javawebinar.basejava.model.ContactType" %>
-<%@ page import="ru.javawebinar.basejava.model.ListSection" %>
-<%@ page import="ru.javawebinar.basejava.model.OrganizationSection" %>
 <%@ page import="ru.javawebinar.basejava.model.SectionType" %>
 <%@ page import="ru.javawebinar.basejava.util.DateUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/style.css">
     <jsp:useBean id="resume" type="ru.javawebinar.basejava.model.Resume" scope="request"/>
+    <script src="js/edit.js" type="text/javascript"></script>
     <title>Резюме ${resume.fullName}</title>
 </head>
 <body>
@@ -17,78 +17,158 @@
 <section>
     <form method="post" action="resume" enctype="application/x-www-form-urlencoded">
         <input type="hidden" name="uuid" value="${resume.uuid}">
-        <h1>Имя:</h1>
         <dl>
-            <input type="text" name="fullName" size=55 value="${resume.fullName}">
+            <dt>Имя:</dt>
+            <dd><input type="text" name="fullName" size=50 value="${resume.fullName}" required></dd>
         </dl>
-        <h2>Контакты:</h2>
-        <c:forEach var="type" items="<%=ContactType.values()%>">
+        <h3>Контакты:</h3>
+        <c:forEach var="type" items="${ContactType.values()}">
             <dl>
                 <dt>${type.title}</dt>
+                <c:if test="${type.name().equals(\"MAIL\")}">
+                <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}" required></dd>
+                </c:if>
+                <c:if test="${!type.name().equals(\"MAIL\")}">
                 <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
+                </c:if>
             </dl>
         </c:forEach>
-        <hr>
-        <c:forEach var="type" items="<%=SectionType.values()%>">
-            <c:set var="section" value="${resume.getSection(type)}"/>
-            <jsp:useBean id="section" type="ru.javawebinar.basejava.model.Section"/>
-            <h2><a>${type.title}</a></h2>
-            <c:choose>
-                <c:when test="${type=='OBJECTIVE'}">
-                    <input type='text' name='${type}' size=75 value='<%=section%>'>
-                </c:when>
-                <c:when test="${type=='PERSONAL'}">
-                    <textarea name='${type}' cols=75 rows=5><%=section%></textarea>
-                </c:when>
-                <c:when test="${type=='QUALIFICATIONS' || type=='ACHIEVEMENT'}">
-                    <textarea name='${type}' cols=75
-                              rows=5><%=String.join("\n", ((ListSection) section).getItems())%></textarea>
-                </c:when>
-                <c:when test="${type=='EXPERIENCE' || type=='EDUCATION'}">
-                    <c:forEach var="org" items="<%=((OrganizationSection) section).getOrganizations()%>"
-                               varStatus="counter">
-                        <dl>
-                            <dt>Название учереждения:</dt>
-                            <dd><input type="text" name='${type}' size=100 value="${org.homePage.name}"></dd>
-                        </dl>
-                        <dl>
-                            <dt>Сайт учереждения:</dt>
-                            <dd><input type="text" name='${type}url' size=100 value="${org.homePage.url}"></dd>
-                            </dd>
-                        </dl>
-                        <br>
-                        <div style="margin-left: 30px">
-                            <c:forEach var="pos" items="${org.positions}">
-                                <jsp:useBean id="pos" type="ru.javawebinar.basejava.model.Organization.Position"/>
-                                <dl>
-                                    <dt>Начальная дата:</dt>
-                                    <dd>
-                                        <input type="text" name="${type}${counter.index}startDate" size=10
-                                               value="<%=DateUtil.format(pos.getStartDate())%>" placeholder="MM/yyyy">
-                                    </dd>
-                                </dl>
-                                <dl>
-                                    <dt>Конечная дата:</dt>
-                                    <dd>
-                                        <input type="text" name="${type}${counter.index}endDate" size=10
-                                               value="<%=DateUtil.format(pos.getEndDate())%>" placeholder="MM/yyyy">
-                                </dl>
-                                <dl>
-                                    <dt>Должность:</dt>
-                                    <dd><input type="text" name='${type}${counter.index}title' size=75
-                                               value="${pos.title}">
-                                </dl>
-                                <dl>
-                                    <dt>Описание:</dt>
-                                    <dd><textarea name="${type}${counter.index}description" rows=5
-                                                  cols=75>${pos.description}</textarea></dd>
-                                </dl>
-                            </c:forEach>
-                        </div>
-                    </c:forEach>
-                </c:when>
-            </c:choose>
+
+        <h3>${SectionType.OBJECTIVE.title}:</h3>
+        <input type="text" name="OBJECTIVE" size=60
+               value="${resume.getSection(SectionType.OBJECTIVE).getContent()}" required><br/>
+
+        <h3>${SectionType.PERSONAL.title}:</h3>
+        <textarea name="PERSONAL" rows="5" cols="58" style="resize: none" >${resume.getSection(SectionType.PERSONAL).getContent()}</textarea>
+        <br/>
+
+        <h3>${SectionType.ACHIEVEMENT.title}: <a onclick="return addField('acievId', 'ACHIEVEMENT')" href="#"><img src="img/add.png"></a></h3>
+        <div id="acievId">
+        </div>
+        <c:forEach var="achieve" items="${resume.getSection(SectionType.ACHIEVEMENT).getItems()}">
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            <textarea name="ACHIEVEMENT" rows="5" cols="58" style="resize: none"
+                                      required>${achieve}</textarea>
+                        </td>
+                        <td>
+                            <a onclick="return deleteBlock(this)" href="#"><img src="img/delete.png"></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </c:forEach>
+
+        <h3>${SectionType.QUALIFICATIONS.title}: <a onclick="return addField('qualId', 'QUALIFICATIONS')" href="#"><img src="img/add.png"></a></h3>
+        <div id="qualId">
+        </div>
+        <c:forEach var="qualif" items="${resume.getSection(SectionType.QUALIFICATIONS).getItems()}">
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            <textarea name="QUALIFICATIONS" rows="5" cols="58" style="resize: none"
+                                      required>${qualif}</textarea>
+                        </td>
+                        <td>
+                            <a onclick="return deleteBlock(this)" href="#"><img src="img/delete.png"></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </c:forEach>
+
+        <h3>${SectionType.EXPERIENCE.title}: <a onclick="return addSectionBlock('expId', 'EXPERIENCE', 'expPos')" href="#"><img src="img/add.png"></a></h3>
+        <div id="expId">
+        </div>
+        <c:forEach var="organization" items="${resume.getSection(SectionType.EXPERIENCE).getOrganizations()}"
+                   varStatus="loop">
+            <div>
+                <jsp:useBean id="organization" type="ru.javawebinar.basejava.model.Organization"/>
+                <b>Название организации:</b>
+                <input id="org${loop.index}" type="text" name="EXPERIENCE" size=40 value="${organization.homePage.name}" required
+                       onkeyup="saveName('org${loop.index}', 'orgPos${loop.index}')">
+                &nbsp;<b>URL организации:</b>
+                <input type="text" name="EXPERIENCE" size=40 value="${organization.homePage.url}">
+                <a onclick="return deleteField(this)" href="#"><img src="img/delete.png"></a>
+                <a onclick="return addPositionBlock('posId${loop.index}', 'expPos')" href="#"><img src="img/add.png"></a>
+                <br/><br/>
+                <div id="posId${loop.index}">
+                    <c:forEach var="position" items="${organization.positions}">
+                        <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
+                        <table style="padding: 0 0 2ch 0">
+                            <tr>
+                                <td width="19%">
+                                    Позиция:<br/>
+                                    <input type="hidden" id="orgPos${loop.index}" name="expPos"
+                                           value="${organization.homePage.name}">
+                                    <input type="text" size="20" name="expPos" value="${position.title}" required><br/><br/>
+                                    Дата начала:<br/>
+                                    <input type="date" name="expPos" value="${position.startDate}" required><br/><br/>
+                                    Дата окончания:<br/>
+                                    <input type="date" name="expPos"
+                                           value="${position.endDate.isEqual(DateUtil.NOW) ? null : position.endDate}">
+                                </td>
+                                <td>
+                                    Деятельность:<br/>
+                                    <textarea name="expPos" rows="10" cols="103" style="resize: none">${position.description}</textarea>
+                                </td>
+                                <td>
+                                    <a onclick="return deleteBlock(this)" href="#"><img src="img/delete.png"></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </c:forEach>
+                </div>
+            </div>
+        </c:forEach>
+
+        <h3>${SectionType.EDUCATION.title}: <a onclick="return addSectionBlock('eduId', 'EDUCATION', 'eduPos')" href="#"><img src="img/add.png"></a></h3>
+        <div id="eduId">
+        </div>
+        <c:forEach var="organization" items="${resume.getSection(SectionType.EDUCATION).getOrganizations()}"
+                   varStatus="loop">
+            <div>
+                <b>Название организации:</b>
+                <input id="org${loop.index + 50}" type="text" name="EDUCATION" size=40 value="${organization.homePage.name}" required
+                       onkeyup="saveName('org${loop.index + 50}', 'orgPos${loop.index + 50}')">
+                &nbsp;<b>URL организации:</b>
+                <input type="text" name="EDUCATION" size=40 value="${organization.homePage.url}">
+                <a onclick="return deleteField(this)" href="#"><img src="img/delete.png"></a>
+                <a onclick="return addPositionBlock('posId${loop.index + 50}', 'eduPos')" href="#"><img src="img/add.png"></a>
+                <br/><br/>
+                <div id="posId${loop.index + 50}">
+                    <c:forEach var="position" items="${organization.positions}">
+                        <table style="padding: 0 0 2ch 0">
+                            <tr>
+                                <td width="19%">
+                                    Позиция:<br/>
+                                    <input type="hidden" id="orgPos${loop.index + 50}" name="eduPos"
+                                           value="${organization.homePage.name}">
+                                    <input type="text" size="20" name="eduPos" value="${position.title}" required><br/><br/>
+                                    Дата начала:<br/>
+                                    <input type="date" name="eduPos" value="${position.startDate}" required><br/><br/>
+                                    Дата окончания:<br/>
+                                    <input type="date" name="eduPos"
+                                           value="${position.endDate.isEqual(DateUtil.NOW) ? null : position.endDate}">
+                                </td>
+                                <td>
+                                    Деятельность:<br/>
+                                    <textarea name="eduPos" rows="10" cols="103" style="resize: none">${position.description}</textarea>
+                                </td>
+                                <td>
+                                    <a onclick="return deleteBlock(this)" href="#"><img src="img/delete.png"></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </c:forEach>
+                </div>
+            </div>
+        </c:forEach>
+
+        <hr>
         <button type="submit">Сохранить</button>
         <button onclick="window.history.back()">Отменить</button>
     </form>
